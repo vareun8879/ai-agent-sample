@@ -1,0 +1,45 @@
+{"id": "a01", "question": "인공지능산업융합사업단의 영문 약칭이 뭐야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [1, 2], "keywords": ["AICA"], "note": "p2: 기관명 인공지능산업융합사업단 (영문 약칭 AICA)"}
+{"id": "a02", "question": "인공지능산업융합사업단은 어디에 있어?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [2, 12], "keywords": ["광주", "첨단3지구|첨단 3지구"], "note": "p2·p12: 광주광역시 북구 첨단3지구 AI집적단지"}
+{"id": "a03", "question": "사업단 홈페이지 주소가 뭐야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [1, 2, 12], "keywords": ["aica-gj.kr"], "note": "p2·p12: www.aica-gj.kr"}
+{"id": "a04", "question": "사업단 통합신청 포털 이름이 뭐야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [2, 5, 12], "keywords": ["aTOPS"], "note": "p2: 통합신청 포털 aTOPS(portal.atops.or.kr)"}
+{"id": "a05", "question": "인공지능산업융합사업단은 언제 출범했어?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [2, 4], "keywords": ["2020"], "note": "p4 연혁: 2020 과기정통부·광주시, 사업단 출범"}
+{"id": "a06", "question": "광주의 3대 주력산업이 뭐야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [3, 7], "keywords": ["에너지", "자동차", "헬스케어"], "note": "p3: 에너지 · 자동차 · 헬스케어"}
+{"id": "a07", "question": "AI 집적단지 조성사업은 어느 부처와 어느 지자체가 함께 추진해?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [3, 4], "keywords": ["과학기술정보통신부|과기정통부", "광주광역시|광주시"], "note": "p3: 과학기술정보통신부와 광주광역시가 함께 추진"}
+{"id": "a08", "question": "AI 집적단지 조성공사는 언제 착공했어?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [4], "keywords": ["2021"], "note": "p4 연혁: 2021.11 첨단3지구 AI 집적단지 조성공사 착공"}
+{"id": "a09", "question": "국가AI데이터센터는 언제 정식 운영을 시작했어?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [4], "keywords": ["2023"], "note": "p4 연혁: 2023.11 국가AI데이터센터 정식 운영 개시"}
+{"id": "a10", "question": "국가AI데이터센터를 구축하고 운영하는 민간 사업자는 어디야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [4, 6], "keywords": ["NHN"], "note": "p4·p6: NHN클라우드"}
+{"id": "a11", "question": "집적단지 사업을 전담 관리하는 기관은 어디야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [4], "keywords": ["정보통신산업진흥원|NIPA"], "note": "p4 추진체계: 정보통신산업진흥원(NIPA) 사업 전담(관리)"}
+{"id": "a12", "question": "AI 집적단지 1단계 사업은 언제 준공됐어?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [4], "keywords": ["2024"], "note": "p4 연혁: 2024 실증·창업동 준공, 1단계 사업 준공"}
+{"id": "a13", "question": "사업단의 주요 사업 영역은 몇 개야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [5], "keywords": ["6|여섯"], "note": "p5: 여섯 개 사업 영역 (①~⑥, 6대 영역)"}
+{"id": "a14", "question": "국가AI데이터센터 연산능력은 얼마야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [2, 6, 11], "keywords": ["88.5"], "note": "p6: 88.5PF"}
+{"id": "a15", "question": "국가AI데이터센터 데이터 저장용량은?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [6, 11], "keywords": ["107"], "note": "p6: 107PB"}
+{"id": "a16", "question": "컴퓨팅 자원은 최대 몇 개월 무상으로 쓸 수 있어?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [6], "keywords": ["3개월"], "note": "p6: 최대 3개월 무상 제공"}
+{"id": "a17", "question": "광주 지역기업은 데이터센터 이용을 몇 퍼센트 할인받아?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [6], "keywords": ["50"], "note": "p6: 광주 지역기업 데이터센터 50%(신규 선정기업 한정) 할인", "exclude": ["30%", "30퍼센트"]}
+{"id": "a18", "question": "과제당 SSD 저장공간은 얼마나 줘?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [6], "keywords": ["30TB|30"], "note": "p6: 저장공간 과제당 SSD 30TB · HDD 200TB"}
+{"id": "a19", "question": "실증장비 이용은 광주 지역기업이 몇 퍼센트 할인이야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [7], "keywords": ["30"], "note": "p7: 실증장비 이용 지원(광주 지역기업 30% 할인)", "exclude": ["50%", "50퍼센트"]}
+{"id": "a20", "question": "실증장비는 몇 종이야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [7, 11], "keywords": ["53"], "note": "p7·p11: 실증장비 53종(2026 예산 기준)"}
+{"id": "a21", "question": "실증·창업동 입주지원실은 몇 실이야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [8, 11], "keywords": ["67"], "note": "p8·p11: 입주지원실(67실)"}
+{"id": "a22", "question": "AI 시제품·서비스 제작 지원은 기업당 얼마야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [8], "keywords": ["50", "150"], "exclude": ["250"], "note": "p8 표: AI (시)제품·서비스 제작 50 ~ 150백만원 — 옆 행(상용화 250)이 섞이면 오답"}
+{"id": "a23", "question": "AI 제품·서비스 상용화 지원 규모는 기업당 얼마야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [8], "keywords": ["100", "250"], "exclude": ["150"], "note": "p8: AI 제품·서비스 상용화 100 ~ 250백만원 — 옆 행(시제품 150)이 섞이면 오답"}
+{"id": "a24", "question": "사업화 지원 대상은 창업 몇 년 미만 기업이야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [8], "keywords": ["7년"], "note": "p8: 창업 7년 미만 스타트업 및 컨소시엄"}
+{"id": "a25", "question": "AX가 뭐야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [9], "keywords": ["전환"], "note": "p9: AX(AI Transformation) — 기존 산업에 AI를 결합해 전환"}
+{"id": "a26", "question": "광주인공지능사관학교는 언제 개교했어?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [10], "keywords": ["2020"], "note": "p10: 2020년 개교"}
+{"id": "a27", "question": "인공지능사관학교 누적 배출 인원은 몇 명이야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [10, 11], "keywords": ["1,528|1528"], "note": "p10·p11: 1,528명 누적 배출(5년)"}
+{"id": "a28", "question": "인공지능사관학교 취·창업률은 몇 퍼센트야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [10], "keywords": ["76"], "note": "p10: 76% 취·창업률(3~5기)"}
+{"id": "a29", "question": "2026년 인공지능사관학교는 몇 기야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [10], "keywords": ["7기"], "note": "p10: 2026년 제7기 'AI 최고급 과정'"}
+{"id": "a30", "question": "사관학교 7기 총사업비는 얼마야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [10], "keywords": ["105억"], "note": "p10: 총사업비 약 105억원"}
+{"id": "a31", "question": "AI 집적단지 부지 면적은 얼마야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [11], "keywords": ["47,246|47246"], "note": "p11: 집적단지 부지 47,246㎡"}
+{"id": "a32", "question": "사업단 사업 문의 전화번호는?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [12], "keywords": ["610-3941"], "note": "p12: 062-610-3941 / 3946 (사업별 상이)"}
+{"id": "a33", "question": "국가AI데이터센터 건물은 몇 층이야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [11], "keywords": ["2층"], "note": "p11: 국가AI데이터센터 지상 2층"}
+{"id": "a34", "question": "aTOPS 포털 주소가 뭐야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [2, 5, 12], "keywords": ["portal.atops.or.kr"], "exclude": ["포털.atops"], "note": "09-22 수동 #205: '포털.atops.or.kr' 로 portal 을 한글로 옮김 — verify.unsupported_urls 대응"}
+{"id": "a35", "question": "AI 시제품 제작 지원과 상용화 지원은 기업당 각각 얼마야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [8], "keywords": ["150", "250"], "note": "복합 — p8 표 두 행(50~150 / 100~250). 09-22 수동 #293: 시제품 행만 읽어 줌"}
+{"id": "a36", "question": "인공지능사관학교 누적 배출 인원과 취·창업률을 같이 알려줘", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [10, 11], "keywords": ["1,528|1528", "76"], "note": "복합 — p10. 09-22 수동 #296: 인원만 답함"}
+{"id": "a37", "question": "사업단은 어느 기관 근처에 있어?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [2, 11], "keywords": ["광주과학기술원|GIST"], "note": "p2 소재지 (광주과학기술원 인접). 09-22 수동 #210: p12 소재지만 읽고 'AI집적단지1' 각주 숫자까지 답함"}
+{"id": "a38", "question": "집적단지 조성공사 착공과 1단계 준공은 각각 언제야?", "doc": "인공지능산업융합사업단", "institution": "Z039353", "pages": [4], "keywords": ["2021", "2024"], "note": "복합 — p4 연혁. 09-22 수동 #299: 연혁 전체를 각주 숫자째 읽어 줌"}
+{"id": "ax06", "question": "사업단 대표 팩스 번호가 뭐야?", "institution": "Z039353", "grounded": false, "note": "문서에 팩스 없음 — 09-22 수동 #288: 전화번호로 대신 답함 + '답변은 …입니다' 라벨 누출"}
+{"id": "ax07", "question": "광주 첨단3지구까지 가는 버스 노선 알려줘", "institution": "Z039353", "grounded": false, "note": "문서에 교통편 없음 — 09-22 수동 #289: 주소로 대신 답함"}
+{"id": "ax01", "question": "오늘 날씨 어때?", "institution": "Z039353", "grounded": false, "note": "무관"}
+{"id": "ax02", "question": "치킨 맛집 추천해줘", "institution": "Z039353", "grounded": false, "note": "무관"}
+{"id": "ax03", "question": "삼성전자 주가 어때?", "institution": "Z039353", "grounded": false, "note": "무관"}
+{"id": "ax04", "question": "파스타 레시피 알려줘", "institution": "Z039353", "grounded": false, "note": "무관"}
+{"id": "ax05", "question": "여보세요", "institution": "Z039353", "grounded": false, "note": "키오스크 시험 입력"}

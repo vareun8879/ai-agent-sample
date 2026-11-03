@@ -1,0 +1,13 @@
+# 2026-09-16 검증 조합으로 고정 (개발 PC Python 3.11 실측). 서버는 3.12로도 돌림 — 버전 충돌 시 이 파일부터 확인
+# Linux 에서 torch==2.14.0 은 CUDA 12 빌드가 기본으로 설치된다 (별도 index 불필요).
+fastapi==0.135.3
+uvicorn[standard]==0.44.0
+httpx==0.28.1
+
+# Stage 1 (retrieval) - same embedding model as indexing + Chroma query
+sentence-transformers==5.3.0
+transformers==4.57.6
+torch==2.14.0
+numpy==1.26.4
+# chroma_db 는 chromadb 1.x 형식(migration 10)으로 만들어져 있다 — 1.x 유지
+chromadb==1.5.7

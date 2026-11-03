@@ -1,0 +1,5 @@
+# 2026-09-16 검증 조합으로 고정 (개발 PC Python 3.11 실측). 서버는 3.12로도 돌림 — 버전 충돌 시 이 파일부터 확인
+fastapi==0.135.3
+uvicorn[standard]==0.44.0
+python-multipart==0.0.26
+httpx==0.28.1

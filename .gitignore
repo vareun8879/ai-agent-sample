@@ -1,0 +1,36 @@
+# 비밀값
+**/.env
+**/.env.*
+!**/.env.example
+
+# 모델·가상환경
+**/models/
+**/app-env/
+**/vllm-env/
+
+# 인덱싱 산출물 (vlm_cache 는 기관 문서에서 나온 내용)
+**/indexing/chroma_db/
+**/indexing/output/
+**/indexing/output_chunks/
+**/indexing/output_embeddings/
+**/indexing/snapshot.json
+**/indexing/vlm_cache/
+
+# 기관 원본 문서
+**/docs/**/*.pdf
+
+# 백업·로그·측정 결과
+*.tar.gz
+*.log
+**/logs/
+**/reports/
+**/last_report*.json
+**/regressed_ids.txt
+**/.pending
+
+# 개인 메모
+AI 에이전트*.txt
+
+# 파이썬
+__pycache__/
+*.pyc

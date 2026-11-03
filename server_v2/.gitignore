@@ -1,0 +1,12 @@
+**/.env
+**/.pending
+**/__pycache__/
+**/*.pyc
+**/logs/
+reports/
+indexing/chroma_db/
+indexing/output/
+indexing/output_chunks/
+indexing/snapshot.json
+models/
+app-env/

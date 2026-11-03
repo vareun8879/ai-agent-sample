@@ -1,0 +1,11 @@
+# 2026-09-16 검증 조합으로 고정 (개발 PC Python 3.11 실측). 서버는 3.12로도 돌림 — 버전 충돌 시 이 파일부터 확인
+fastapi==0.135.3
+uvicorn[standard]==0.44.0
+httpx==0.28.1
+
+# VLM_BACKEND=transformers (A.X-4.0-VL-Light 인프로세스 로드). app-env 를 rag_service 와 공유하므로 같은 버전으로 고정
+torch==2.14.0
+transformers==4.57.6
+pillow>=10
+# 커스텀 모델 코드(custom_code)가 요구할 수 있는 보조 패키지 — 로드 시 ImportError 가 나면 그 이름을 여기에 추가
+einops

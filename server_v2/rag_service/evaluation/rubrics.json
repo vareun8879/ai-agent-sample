@@ -1,0 +1,18 @@
+{
+  "mangmi_2026": {
+    "m17": [{"subject": [], "values": ["255명"]}],
+    "m18": [{"subject": [], "values": ["11개", "11학급"], "alternatives": true}],
+    "m29": [{"subject": ["보건실"], "values": ["1층"]}, {"subject": ["도서실"], "values": ["2층"]}],
+    "m30": [{"subject": ["신고"], "values": ["2점"]}, {"subject": ["표창"], "values": ["10점"]}],
+    "m32": [{"subject": ["학생 수", "학생수"], "values": ["255명"]}, {"subject": ["학급 수", "학급수"], "values": ["11학급", "11개"], "alternatives": true}]
+  },
+  "aica_2026": {
+    "a08": [{"subject": [], "values": ["2021년", "11월"]}],
+    "a22": [{"subject": [], "values": ["50백만원", "150백만원"]}],
+    "a23": [{"subject": [], "values": ["100백만원", "250백만원"]}],
+    "a35": [{"subject": ["시제품", "(시)제품"], "values": ["50백만원", "150백만원"]}, {"subject": ["상용화"], "values": ["100백만원", "250백만원"]}],
+    "a36": [{"subject": ["배출", "인원"], "values": ["1528명"]}, {"subject": ["취·창업률", "취창업률", "취업률"], "values": ["76%"]}],
+    "a38": [{"subject": ["착공"], "values": ["2021년", "11월"]}, {"subject": ["준공"], "values": ["2024년"]}]
+  },
+  "paichai_2026": {}
+}
