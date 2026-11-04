@@ -2,10 +2,9 @@
 
 사용:
   cd rag_service
-  python golden_eval.py golden/mangmi_2026.jsonl                # 검색만 채점 (엔진 in-process, LLM 불필요)
   python golden_eval.py golden/mangmi_2026.jsonl --answer       # 답변까지 채점 (rag_service HTTP :8001)
   python golden_eval.py golden/*.jsonl --answer --url http://127.0.0.1:8001 --key <INTERNAL_API_KEY>
-  python golden_eval.py golden/mangmi_2026.jsonl --report golden/last_report.json
+  python golden_eval.py golden/mangmi_2026.jsonl --answer --report golden/last_report.json
 
 문항 형식(JSONL, 한 줄에 하나):
   {"id": "m01", "question": "입학식은 언제야?", "doc": "망미중학교", "pages": [49],
@@ -23,7 +22,8 @@
 채점:
   검색 통과 = doc·pages 조건 충족 (또는 grounded=false 문항이 근거 0건)
   답변 통과 = 검색 통과 + keywords 모두 충족           (--answer 일 때만)
-종료 코드: 필수 문항의 (답변 모드면 답변, 아니면 검색) 통과율이 --min-pass(기본 0.9) 미만이면 1.
+HTTP 측정의 retrieval_ok는 최종 답변 출처 기준이다. 실제 검색 결과는 이 API에서 관측하지 않는다.
+종료 코드: 필수 문항의 adjusted_answer_ok 통과율이 --min-pass(기본 0.9) 미만이면 1.
 """
 
 import argparse
@@ -34,7 +34,7 @@ import sys
 import time
 from pathlib import Path
 from typing import Optional
-from evaluation.rubric import assess
+from evaluation.answer_grading import GRADING_VERSION, evaluate
 
 HERE = Path(__file__).resolve().parent
 
@@ -58,24 +58,7 @@ def load_cases(patterns: list[str]) -> list[dict]:
     return cases
 
 
-# ── 백엔드: in-process 검색 / HTTP 답변 ─────────────────────
-
-
-class LocalRetrieval:
-    """rag_service 엔진을 이 프로세스에 띄워 검색만 한다 (Ollama 불필요)."""
-
-    def __init__(self) -> None:
-        sys.path.insert(0, str(HERE))
-        from rag.engine import RagEngine  # noqa: WPS433
-
-        t = time.time()
-        self.engine = RagEngine()
-        self.engine.load()
-        print(f"[엔진 로드 {time.time() - t:.1f}s]")
-
-    def run(self, question: str, institution_id: Optional[str] = None) -> dict:
-        chunks = self.engine.retrieve_context(question, institution_id=institution_id)
-        return {"answer": None, "grounded": bool(chunks), "sources": chunks}
+# ── 백엔드: HTTP 답변 ──────────────────────────────────────
 
 
 class HttpAnswer:
@@ -94,8 +77,8 @@ class HttpAnswer:
         r = self.client.post("/answer", json=body)
         r.raise_for_status()
         data = r.json()
-        return {"answer": data.get("answer", ""), "grounded": bool(data.get("grounded")), "sources": data.get("sources", []),
-                "unverified": data.get("unverified") or []}
+        return {"answer": data.get("answer", ""), "grounded": data.get("grounded"), "sources": data.get("sources", []),
+                "unverified": data.get("unverified")}
 
 
 # ── 채점 ─────────────────────────────────────────────────────
@@ -132,14 +115,17 @@ def grade(case: dict, result: dict, with_answer: bool, rubric_rules=None) -> dic
             if banned:
                 why = (why + "; " if why else "") + f"금지 값 포함 {banned} (다른 행의 값이 섞임)"
             if result.get("unverified"):
-                # 검색은 됐지만 모델이 근거에 없는 숫자를 지어내 검증기가 막은 경우 — '못 찾음' 과 구분해 표시
-                why = (why + "; " if why else "") + f"환각 차단(근거에 없는 숫자 {result['unverified']})"
+                # log 모드에서는 오류가 있어도 답변이 표시될 수 있으므로 '차단'으로 부르지 않는다.
+                why = (why + "; " if why else "") + f"검증 오류 {result['unverified']}"
     # 실측(261103_2, a22/a23/a35): 부분 문자열 키워드는 금액의 자리수·단위 오류도 PASS시켰다.
     # 기존 판정은 보존하고, 별도 값 기준으로만 조정한다. 규칙이 없는 문항은 기존 판정 그대로.
-    rubric_status, rubric_reasons = "legacy_only", []
-    if with_answer and rubric_rules:
-        rubric_status, rubric_reasons = assess(result["answer"] or "", rubric_rules)
-    adjusted_answer_ok = (answer_ok and rubric_status != "fail") if with_answer else None
+    rubric_status, rubric_reasons, adjusted_answer_ok = "legacy_only", [], None
+    if with_answer:
+        rubric_status, rubric_reasons, adjusted_answer_ok = evaluate(
+            case, result["answer"] or "", answer_ok, rubric_rules, call_failed="_error" in case)
+    if "_error" in case:
+        retrieval_ok, answer_ok = False, False if with_answer else None
+        why = f"호출 실패: {case['_error']}"
     return {
         "id": case.get("id"),
         "question": case["question"],
@@ -149,8 +135,18 @@ def grade(case: dict, result: dict, with_answer: bool, rubric_rules=None) -> dic
         "adjusted_answer_ok": adjusted_answer_ok,
         "rubric_status": rubric_status,
         "rubric_reasons": rubric_reasons,
+        "grading_version": GRADING_VERSION,
+        "call_failed": "_error" in case,
+        "citation_ok": retrieval_ok,
+        "retrieval_basis": "answer_sources" if with_answer else "retrieved_sources",
+        "retrieval_observed": not with_answer,
+        "actual_retrieval_ok": None if with_answer else retrieval_ok,
         "pages": [p for _, p in pages],
-        "answer": (result["answer"] or "")[:300] if with_answer else None,
+        "sources": sources,
+        "grounded": result.get("grounded"),
+        "unverified": result.get("unverified", []),
+        "answer": (result["answer"] or "") if with_answer else None,
+        "answer_truncated": False,
         "why": why,
     }
 
@@ -191,24 +187,20 @@ def main() -> None:
             c = dict(c, _error=str(exc))
         row = grade(c, res, args.answer, rubric_by_id.get(c.get("id")))
         row["seconds"] = round(time.time() - t, 1)
-        if "_error" in c:
-            # 서비스 장애는 어떤 문항이든 실패 — 무관 문항이 빈 답을 '거절' 로 통과하지 않게 (09-18 실측: 재시작 중 돌린 보고서)
-            row["why"] = f"호출 실패: {c['_error']}"
-            row["retrieval_ok"] = False
-            row["answer_ok"] = False if args.answer else None
-            row["adjusted_answer_ok"] = False if args.answer else None
         rows.append(row)
-        mark = ("답변 " + ("PASS" if row["answer_ok"] else "FAIL")) if args.answer else ("검색 " + ("PASS" if row["retrieval_ok"] else "FAIL"))
+        mark = "기존 답변 " + ("PASS" if row["answer_ok"] else "FAIL")
         if args.answer and row["answer_ok"] and not row["adjusted_answer_ok"]:
-            mark += " / 값 기준 FAIL"
+            mark += " / 추가 기준 " + ("REVIEW" if row["rubric_status"] == "review" else "FAIL")
+        elif row["adjusted_answer_ok"] and not row["answer_ok"]:
+            mark += " / 추가 기준 PASS"
         opt = " (선택)" if row["optional"] else ""
-        show_row = not args.fail_only or not row["adjusted_answer_ok" if args.answer else "retrieval_ok"]
+        show_row = not args.fail_only or (not row["adjusted_answer_ok"] and row["rubric_status"] != "review")
         if show_row:
             print(f"{row['id']:>4} {mark}{opt} {row['seconds']:>5}s  {row['question']}  → p{row['pages']}  {row['why']}")
         if show_row and args.answer and row["answer"]:
             print(f"       ↳ {row['answer'][:140].replace(chr(10), ' ')}")
         if show_row and row["rubric_status"] in ("fail", "review"):
-            print(f"       값 기준 {row['rubric_status']}: {row['rubric_reasons']}")
+            print(f"       추가 기준 {row['rubric_status']}: {row['rubric_reasons']}")
 
     required = [r for r in rows if not r["optional"]]
     key = "answer_ok" if args.answer else "retrieval_ok"
@@ -216,16 +208,18 @@ def main() -> None:
     rate = passed / len(required) if required else 1.0
     r_pass = sum(1 for r in required if r["retrieval_ok"])
     adjusted_pass = sum(1 for r in required if r["adjusted_answer_ok"])
+    reviews = sum(1 for r in required if r["rubric_status"] == "review")
+    adjusted_rate = adjusted_pass / len(required) if required else 1.0
     print("-" * 60)
-    print(f"검색 통과 {r_pass}/{len(required)}" + (f", 답변 통과 {passed}/{len(required)}" if args.answer else "")
-          + f"  → 통과율 {rate:.0%} (기준 {args.min_pass:.0%})"
+    print(f"답변 출처 기준 통과 {r_pass}/{len(required)}" + (f", 기존 답변 통과 {passed}/{len(required)}" if args.answer else "")
+          + f"  → 기존 통과율 {rate:.2%}"
           + (f"  [선택 문항 {len(rows) - len(required)}개 별도]" if len(rows) != len(required) else ""))
-    print(f"추가 값 기준 반영 {adjusted_pass}/{len(required)}"
-          " (규칙 없는 문항은 기존 판정 유지, review는 확정 실패로 세지 않음)")
+    print(f"추가 기준 반영 {adjusted_pass}/{len(required)} ({adjusted_rate:.2%}, 기준 {args.min_pass:.0%}), 확인 필요 {reviews}건"
+          " (규칙 없는 문항은 기존 판정 유지, 확인 필요는 통과에 포함하지 않음)")
     if args.report:
         Path(args.report).write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
         print("보고서:", args.report)
-    sys.exit(0 if rate >= args.min_pass else 1)
+    sys.exit(0 if adjusted_rate >= args.min_pass else 1)
 
 
 if __name__ == "__main__":

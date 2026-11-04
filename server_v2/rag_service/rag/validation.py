@@ -7,7 +7,7 @@
 from decimal import Decimal
 import re
 import unicodedata
-from .contracts import CheckedItem, Evidence, ItemAnswer
+from .contracts import CheckedItem, Evidence, ItemAnswer, ValidationCode, ValidationIssue
 
 NUMBER = re.compile(r"(?<![\d.])\d[\d,]*(?:\.\d+)?")
 QUANTITY = re.compile(r"(?<![\d.])(\d[\d,]*(?:\.\d+)?)\s*(백만원|천만원|억원|만원|천원|원|퍼센트|%|학급|개월|교시|학년|호선|층|명|개|점|년|월|일|회|종|실|TB|PB|PF|㎡)?", re.I)
@@ -45,30 +45,35 @@ def check(items: list[ItemAnswer], evidence: dict[str, Evidence],
           allowed: dict[str, list[str]]) -> list[CheckedItem]:
     checked = []
     for item in items:
-        errors = []
+        issues = []
         quotes = []
-        for claim in item.claims:
+        for claim_index, claim in enumerate(item.claims):
+            def add(code, message):
+                issues.append(ValidationIssue(code, message, claim.evidence_id, claim_index))
+
             ev = evidence.get(claim.evidence_id)
             if ev is None or claim.evidence_id not in allowed.get(item.part_id, []):
-                errors.append("근거 ID가 해당 항목에 제공되지 않음")
+                add(ValidationCode.EVIDENCE_NOT_ALLOWED, "근거 ID가 해당 항목에 제공되지 않음")
                 continue
             quote = normalized(claim.quote)
             if quote not in normalized(ev.text):
-                errors.append("인용이 원문에 없음")
+                add(ValidationCode.QUOTE_NOT_IN_SOURCE, "인용이 원문에 없음")
                 continue
             quotes.append(claim.quote)
             if normalized(claim.value) not in quote:
-                errors.append("선택 값이 인용에 없음")
+                add(ValidationCode.VALUE_NOT_IN_QUOTE, "선택 값이 인용에 없음")
             if quantities(claim.value):
                 wanted = quantities(claim.value)
                 actual = quantities(item.answer)
                 if not wanted.issubset(actual):
-                    errors.append("선택 값·단위가 항목 답변에 없음")
+                    add(ValidationCode.VALUE_QUANTITY_MISSING_IN_ANSWER, "선택 값·단위가 항목 답변에 없음")
             elif normalized(claim.value) not in normalized(item.answer):
-                errors.append("선택한 이름·설명 구절이 항목 답변에 없음")
+                add(ValidationCode.VALUE_TEXT_MISSING_IN_ANSWER, "선택한 이름·설명 구절이 항목 답변에 없음")
         quoted = quantities("\n".join(quotes))
         for num, unit in quantities(item.answer):
             if (num, unit) not in quoted and (unit == "원" or (num, "") not in quoted):
-                errors.append(f"인용에 없는 값·단위: {num}{unit}")
-        checked.append(CheckedItem(item, list(dict.fromkeys(errors))))
+                issues.append(ValidationIssue(ValidationCode.ANSWER_QUANTITY_NOT_IN_QUOTE,
+                                              f"인용에 없는 값·단위: {num}{unit}"))
+        errors = list(dict.fromkeys(issue.message for issue in issues))
+        checked.append(CheckedItem(item, errors, issues))
     return checked

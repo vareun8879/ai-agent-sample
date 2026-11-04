@@ -1,4 +1,5 @@
-from .contracts import CheckedItem, Outcome, Part, Status
+from dataclasses import asdict
+from .contracts import CheckedItem, Outcome, Part, Status, ValidationCode, ValidationIssue
 
 NO_ANSWER = "제공된 자료에서 답을 확인하지 못했습니다."
 
@@ -28,5 +29,7 @@ def render(parts: list[Part], checked: list[CheckedItem], evidence: dict, mode: 
             sentences.append(prefix + ("자료의 근거가 서로 달라 확인이 필요합니다."
                                       if status == Status.CONFLICT else NO_ANSWER))
         all_supported = bool(all_supported and accepted)
-        states.append({"part_id": part.id, "status": status.value, "errors": issues})
+        details = c.issues if c else [ValidationIssue(ValidationCode.PARSE_FAILURE, "출력 파싱 실패")]
+        states.append({"part_id": part.id, "status": status.value, "errors": issues,
+                       "issues": [asdict(issue) for issue in details]})
     return Outcome(" ".join(sentences), list(sources.values()), all_supported, errors, states)

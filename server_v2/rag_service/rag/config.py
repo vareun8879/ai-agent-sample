@@ -27,6 +27,7 @@ class Settings:
     concurrency: int = 8
     validation_mode: str = "log"
     value_candidates_mode: str = "log"
+    source_span_mode: str = "off"
     fact_anchor_mode: str = "on"
 
     @classmethod
@@ -37,6 +38,9 @@ class Settings:
         candidates_mode = os.getenv("V2_VALUE_CANDIDATES_MODE", "log")
         if candidates_mode not in ("off", "log"):
             raise ValueError("V2_VALUE_CANDIDATES_MODE must be off or log")
+        source_span_mode = os.getenv("V2_SOURCE_SPAN_MODE", "off")
+        if source_span_mode not in ("off", "log"):
+            raise ValueError("V2_SOURCE_SPAN_MODE must be off or log")
         fact_anchor_mode = os.getenv("V2_FACT_ANCHOR_MODE", "on")
         if fact_anchor_mode not in ("off", "log", "on"):
             raise ValueError("V2_FACT_ANCHOR_MODE must be off, log or on")
@@ -62,5 +66,6 @@ class Settings:
             concurrency=max(1, int(os.getenv("V2_CONCURRENCY", "8"))),
             validation_mode=mode,
             value_candidates_mode=candidates_mode,
+            source_span_mode=source_span_mode,
             fact_anchor_mode=fact_anchor_mode,
         )

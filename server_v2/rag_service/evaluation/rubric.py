@@ -35,7 +35,8 @@ def refusal(answer: str) -> tuple[str, list[str]]:
     if not answer.strip():
         return "fail", ["빈 응답은 거절 답변이 아님"]
     # 근거가 없다는 메타데이터만 보고 통과시키지 않는다. 부분 거절은 수동 검토.
-    if re.search(r"(?:확인하지 못|찾을 수 없|확인하기 어렵|안내드리기 어렵|확인이 필요)", answer):
+    # 실측(261104 재채점, bx06): '확인할 수 없습니다'가 정상 거절인데 review로 빠졌다.
+    if re.search(r"(?:확인하지 못|확인할\s*수\s*없|찾을 수 없|확인하기 어렵|안내드리기 어렵|확인이 필요)", answer):
         if re.search(r"\d|http|[A-Za-z]{2,}", answer):
             return "review", ["거절과 구체적 정보가 섞임"]
         if len(answer) > 140:

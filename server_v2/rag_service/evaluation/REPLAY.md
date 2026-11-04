@@ -14,7 +14,9 @@ paren-space(숫자와 숫자로 시작하는 괄호 사이 공백)이다. 모든
 
 ## 클라우드 실행 예
 
-TRACE는 261103_5 측정에 해당하는 실제 파일 경로로 지정한다.
+261103_5 재생 결과에 기록된 trace 경로는
+`/root/ai-agent-v2/reports/20261103_153046/trace.jsonl`이다.
+서버에서 해당 파일이 있는지 `ls -l`로 먼저 확인한다.
 아래 명령은 서브셸에서 환경변수를 읽으므로 SSH 세션 환경을 변경하지 않는다.
 
 ```bash
@@ -25,7 +27,7 @@ source deploy/gpu_server/.env
 set +a
 cd rag_service
 PY=/root/ai-agent/app-env/bin/python
-TRACE=/실제/261103_5/trace.jsonl
+TRACE=/root/ai-agent-v2/reports/20261103_153046/trace.jsonl
 OUT="../reports/replay_$(date '+%Y%m%d_%H%M%S')"
 
 "$PY" -c "import ast; from pathlib import Path; ast.parse(Path('evaluation/replay_generation.py').read_text(encoding='utf-8')); print('syntax OK')" &&
@@ -35,3 +37,5 @@ OUT="../reports/replay_$(date '+%Y%m%d_%H%M%S')"
 "$PY" -m evaluation.replay_generation "$TRACE" --cases m17 m32 --variants paren-space --mode voice --output "$OUT/m17_m32.jsonl"
 )
 ```
+
+

@@ -54,10 +54,30 @@ class ItemAnswer:
     claims: tuple[Claim, ...] = ()
 
 
+class ValidationCode(str, Enum):
+    EVIDENCE_NOT_ALLOWED = "evidence_not_allowed"
+    QUOTE_NOT_IN_SOURCE = "quote_not_in_source"
+    VALUE_NOT_IN_QUOTE = "value_not_in_quote"
+    VALUE_QUANTITY_MISSING_IN_ANSWER = "value_quantity_missing_in_answer"
+    VALUE_TEXT_MISSING_IN_ANSWER = "value_text_missing_in_answer"
+    ANSWER_QUANTITY_NOT_IN_QUOTE = "answer_quantity_not_in_quote"
+    PARSE_FAILURE = "parse_failure"
+    GENERATION_OUTPUT_ERROR = "generation_output_error"
+
+
+@dataclass(frozen=True)
+class ValidationIssue:
+    code: ValidationCode
+    message: str
+    evidence_id: str | None = None
+    claim_index: int | None = None
+
+
 @dataclass
 class CheckedItem:
     item: ItemAnswer
     errors: list[str] = field(default_factory=list)
+    issues: list[ValidationIssue] = field(default_factory=list)
 
 
 @dataclass

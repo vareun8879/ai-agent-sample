@@ -97,11 +97,13 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
                 return "invalid"
         gen = Generator()
         pipeline = Pipeline(Settings(Path("unused"), "rev"), Search(), gen)
-        with patch.object(Pipeline, "record"):
+        with patch.object(Pipeline, "record") as record:
             result = await pipeline.answer("진료실은 몇 층인가?")
+            trace = record.call_args.args[0]
         self.assertEqual(gen.calls, 2)
         self.assertFalse(result.grounded)
         self.assertTrue(result.unverified)
+        self.assertEqual(trace["attempts"][0]["issues"][0]["code"], "parse_failure")
 
     async def test_no_evidence_no_model_calls(self):
         class Search:

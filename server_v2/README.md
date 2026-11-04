@@ -83,6 +83,9 @@ v2 환경 생성 → 같은 unit의 실행 경로 변경 → 기동/준비 상�
 가상환경은 기존 app-env를 사용하며 의존성 버전은 기존 requirements를 유지한다.
 
 5. 첫 측정은 `.env`의 `V2_VALIDATION_MODE=log`로 한다.
+원문 구절 분리 관측은 `V2_SOURCE_SPAN_MODE=log`로 켠다. 답변·검색·모델 입력은
+바뀌지 않고 trace.jsonl의 `source_spans`에 항목별 원문 위치와 질문 낱말
+일치 구절을 기록한다. 기본값은 `off`이며 `rag_service` 재시작으로 반영된다.
 
 ```bash
 cd /root/ai-agent-v2/deploy/gpu_server

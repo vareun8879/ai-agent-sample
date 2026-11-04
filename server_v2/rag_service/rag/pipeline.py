@@ -7,12 +7,13 @@ from pathlib import Path
 import time
 import uuid
 from .config import Settings
-from .contracts import CheckedItem, ItemAnswer, Status
+from .contracts import CheckedItem, ItemAnswer, Status, ValidationCode
 from .evidence import arrange
 from .generation import Generator
 from .parsing import ParseError, parse
 from .query import plan
 from .rendering import render
+from .source_spans import collect as collect_source_spans
 from .validation import check
 from .value_candidates import collect as collect_values, audit as audit_values
 
@@ -60,6 +61,8 @@ class Pipeline:
                             best[c.item.part_id] = c
                     problems = [f"{c.item.part_id}: {e}" for c in checked for e in c.errors]
                     trace["attempts"].append({"raw": raw, "errors": problems,
+                                              "issues": [{"part_id": c.item.part_id, **asdict(issue)}
+                                                         for c in checked for issue in c.issues],
                                               "seconds": time.monotonic() - call_started})
                     if not problems:
                         break
@@ -70,6 +73,9 @@ class Pipeline:
                                                 "답변의 숫자와 단위가 인용에 실제 있는지 확인하라.")}
                 except (ParseError, ValueError) as exc:
                     trace["attempts"].append({"raw": raw, "error": str(exc),
+                                              "issues": [{"code": (ValidationCode.PARSE_FAILURE if
+                                                  isinstance(exc, ParseError) else ValidationCode.GENERATION_OUTPUT_ERROR),
+                                                  "message": str(exc)}],
                                               "seconds": time.monotonic() - call_started})
                     feedback = {"errors": [str(exc)], "previous_output": raw,
                                 "instruction": "모든 항목을 포함한 JSON 객체 하나로 작성하라."}
@@ -91,6 +97,15 @@ class Pipeline:
             except Exception:
                 logger.exception("Value candidate observation failed")
                 trace["value_candidate_error"] = "observation failed"
+        if self.s.source_span_mode == "log":
+            try:
+                trace["source_spans"] = {}
+                for part in parts:
+                    rows = collect_source_spans(part.question, evidence, allowed.get(part.id, []))
+                    trace["source_spans"][part.id] = {"total": len(rows), "rows": rows[:50]}
+            except Exception:
+                logger.exception("Source span observation failed")
+                trace["source_span_error"] = "observation failed"
         outcome.calls = calls
         trace.update({"seconds": time.monotonic() - started, "calls": calls,
                       "result": outcome.response(), "items": outcome.items})
@@ -100,7 +115,8 @@ class Pipeline:
     @staticmethod
     def record(trace):
         # 후보별 진단은 JSONL 원본에 남긴다. journal의 단일 행 크기 제한을 피한다.
-        journal_trace = {key: value for key, value in trace.items() if key != "retrieval_stages"}
+        journal_trace = {key: value for key, value in trace.items()
+                         if key not in ("retrieval_stages", "source_spans")}
         logger.info("trace=%s", json.dumps(journal_trace, ensure_ascii=False))
         path = Path(os.getenv("V2_TRACE_PATH", "logs/trace.jsonl"))
         try:
