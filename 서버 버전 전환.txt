@@ -1,0 +1,15 @@
+버전 1 : sudo bash /root/ai-agent-v2/deploy/gpu_server/switch.sh v1
+
+
+버전 2 : sudo bash /root/ai-agent-v2/deploy/gpu_server/switch.sh v2
+-----------------------------------------------
+- 버전 확인
+cat /var/lib/ai-agent/active-implementation
+sudo systemctl show rag_service orchestrator \
+  -p Id -p ActiveState -p WorkingDirectory
+curl -sS http://127.0.0.1:8001/health
+-----------------------------------------------
+WorkingDirectory가 다음 경로인지 확인하면 됩니다.
+- v1: /root/ai-agent/rag_service
+- v2: /root/ai-agent-v2/rag_service
+-----------------------------------------------
