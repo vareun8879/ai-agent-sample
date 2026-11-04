@@ -38,3 +38,36 @@ skipped로 따로 집계한다. 이 도구는 모델 호출과 원본 파일 변
 
 대조가 통과하면 rag_service를 재시작한 뒤 기존 골든 3세트×3회로 확인한다.
 새 환경변수나 재인덱싱은 필요 없다.
+
+## 3-1 단위 경계 수정
+
+`quantities()`가 숫자 뒤 공백을 넘어 다음 낱말의 첫 글자를 단위로 읽던 문제를 수정한다.
+`2024 실증`, `2025\n개교`, `1 회의실`은 각각 단위 없는 숫자로 남긴다.
+붙여 쓴 단위는 기존처럼 읽고, 띄어 쓴 단위는 끝 경계 또는 일반 조사·서술어 꼬리를
+확인한다. `83명이`, `83 명이`, `5 층에`, `50 백만원입니다`와 독립된 다음 줄 단위는 보존한다.
+이 규칙은 형태소 분석이나 의미 판정이 아니며, 날짜·단위 생략·설명형 비교는 아직 변경하지 않는다.
+
+이제 검증 의미가 바뀌므로 위 동등성 검사 대신 `--compare`를 사용한다.
+이 모드는 실제 파서로 첫 출력을 읽고 추가·제거 오류, 재시도 생략 후보, 새 재시도 필요,
+재시도 피드백 변경을 구별한다. 새 모델 출력·최종 지연은 예측하지 않는다.
+보고서 전체의 추가 판정과 값 규칙을 함께 재채점해 변화도 기록한다.
+
+클라우드에서 가장 최근의 시각 이름 골든 폴더를 선택한다. 출력된 기준 경로가
+261104_1 측정 폴더인지 확인한다. 재채점 폴더는 선택하지 않는다.
+
+```bash
+cd /root/ai-agent-v2
+bash deploy/gpu_server/check.sh && (
+cd rag_service
+BASELINE=$(find /root/ai-agent-v2/reports -mindepth 1 -maxdepth 1 -type d -name '20??????_??????' | sort | tail -n 1)
+printf 'Baseline: %s\n' "$BASELINE"
+/root/ai-agent/app-env/bin/python -m evaluation.audit_validation_codes \
+  "$BASELINE/trace.jsonl" --compare \
+  --reports "$BASELINE"/last_report_*_[123].json \
+  --output "../reports/unit_boundary_audit_$(date '+%Y%m%d_%H%M%S').json"
+)
+```
+
+먼저 report_changes=0인지 확인하고, 추가 오류를 모두 설명할 수 있어야 하며,
+실제 숫자 오류도 계속 검출돼야 한다. 전체 차이는 출력 JSON 파일에 저장한다.
+대조 결과를 검토한 뒤 rag_service를 재시작하고 기존 골든 3세트×3회를 측정한다.
